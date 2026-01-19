@@ -4,8 +4,6 @@ from torch.utils.data import DataLoader
 import os
 import matplotlib.pyplot as plt
 
-# 复用之前的 DiffusionSchedules (假设在 model.py 里，如果没有请把上一轮的那个类复制过来)
-# 这里为了方便，我把 DiffusionSchedules 的定义再贴一次，确保你不用翻以前的代码
 class DiffusionSchedules:
     def __init__(self, n_steps=1000, device='cpu'):
         self.n_steps = n_steps
@@ -32,7 +30,7 @@ def train():
     
     # Config
     BATCH_SIZE = 128
-    EPOCHS = 100 # 数据量大且简单，100轮足够
+    EPOCHS = 100
     LR = 1e-3
     
     # Init
@@ -44,7 +42,7 @@ def train():
     optimizer = optim.Adam(model.parameters(), lr=LR)
     mse = torch.nn.MSELoss()
     
-    print("🚀 Start Sequential Training...")
+    print("Start Sequential Training...")
     loss_history = []
     
     for epoch in range(EPOCHS):
@@ -74,7 +72,8 @@ def train():
     
     plt.plot(loss_history)
     plt.savefig(os.path.join(BASE_DIR, "stepwise_loss.png"))
-    print("✅ Done.")
+    print("Done.")
 
 if __name__ == "__main__":
+
     train()
