@@ -16,7 +16,6 @@ class StepwiseDataset(Dataset):
         row = self.df.iloc[idx]
         
         # Target: d_ratio
-        # 归一化: (x - 1.0) -> 范围变 [-1, 1] 左右
         val = float(row['d_ratio']) - 1.0
         
         # Condition: k_left
@@ -34,7 +33,7 @@ class StepwiseDiffusionNet(nn.Module):
         
         # Embeddings
         self.time_embed = nn.Embedding(n_steps, hidden_dim)
-        self.k_embed = nn.Embedding(20, hidden_dim) # 支持最多20人剩余
+        self.k_embed = nn.Embedding(20, hidden_dim)
         
         # Input Projection
         self.input_proj = nn.Linear(1, hidden_dim)
@@ -45,7 +44,7 @@ class StepwiseDiffusionNet(nn.Module):
         self.block3 = self._make_block(hidden_dim)
         
         # Output
-        self.out = nn.Linear(hidden_dim, 1) # 输出1维噪声
+        self.out = nn.Linear(hidden_dim, 1)
         self.act = nn.SiLU()
 
     def _make_block(self, dim):
@@ -58,7 +57,7 @@ class StepwiseDiffusionNet(nn.Module):
     def forward(self, x, t, k):
         # x: [batch, 1]
         
-        # 1. 特征融合
+        # 1. combination
         h = self.input_proj(x)
         t_emb = self.time_embed(t)
         k_emb = self.k_embed(k)
@@ -75,4 +74,5 @@ class StepwiseDiffusionNet(nn.Module):
         h = h + cond
         h = h + self.block3(self.act(h))
         
+
         return self.out(self.act(h))
